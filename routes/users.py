@@ -1,42 +1,24 @@
-from fastapi import APIRouter, HTTPException
-from models.user_model import BaseModel as User
+from fastapi import APIRouter
+from services import user_services 
+from models.user_model import User
 
 router = APIRouter(
     prefix="/users",
     tags=["users"]
 )
 
-users = []
-
-@router.get("/users")
+@router.get("/")
 def get_users():
-    return users
+    return user_services.get_users()
 
-@router.get("/users/{user_id}")
+@router.get("/{user_id}")
 def get_user(user_id: int):
-    for user in users:
-        if user.id == user_id:           
-            return user
-        
-    raise HTTPException(status_code=404, detail="User not found")
+    return user_services.get_user(user_id)
 
-@router.post("/users")
-async def register_user(new_user: User):
-    
-    for user in users:
-        if user.email == new_user.email:
-            raise HTTPException(status_code=409, detail="Email already registered")
-        
-    new_user.id = len(users) + 1
-    users.append(new_user)
+@router.post("/")
+def register_user(new_user: User):
+    return user_services.register_user(new_user)
 
-    return new_user
-
-@router.delete("/users/{user_id}")
+@router.delete("/{user_id}")
 def delete_user(user_id: int):
-    for user in users:
-        if user.id == user_id:
-            users.remove(user)
-            return {"message": f"User {user.id} deleted!"}
-        
-    raise HTTPException(status_code=404, detail="User not found")
+    return user_services.delete_user(user_id)
