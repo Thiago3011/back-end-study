@@ -22,3 +22,7 @@ def register_user(new_user: User):
 @router.delete("/{user_id}")
 def delete_user(user_id: int):
     return user_services.delete_user(user_id)
+
+@router.patch("/{user_id}")
+def update_user(user_id: int):
+    return user_services.update_user(user_id)
